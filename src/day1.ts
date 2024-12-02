@@ -57,7 +57,7 @@ function exercise2(data: preparedData): number {
   const scaled: number[] = [];
   for (const value of data.a) {
     const multipler = factors.get(value) || 0;
-    console.log(`scaling ${value} by ${multipler} is ${value * multipler}`);
+    //console.log(`scaling ${value} by ${multipler} is ${value * multipler}`);
     scaled.push(value * multipler);
   }
 
@@ -67,8 +67,8 @@ function exercise2(data: preparedData): number {
 console.log(`Advent of Code 2024: Day ${day}`);
 
 // Load data
-const test = prepareData(await readFile(`./data/day${day}.test.txt`));
-const real = prepareData(await readFile(`./data/day${day}.data.txt`));
+const test = prepareData(await readFile(`./data/day${day}/sample.txt`));
+const real = prepareData(await readFile(`./data/day${day}/data.txt`));
 
 // Exercise 1: Test Case
 let answer = exercise1(test);
