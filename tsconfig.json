@@ -10,7 +10,9 @@
     "sourceMap": true,
     "target": "es2023",
     "types": ["node"],
-    "outDir": "dist"
+    "outDir": "dist",
+    "noEmit": true,
+    "allowImportingTsExtensions": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
