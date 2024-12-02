@@ -1,0 +1,20 @@
+{
+  "name": "adventofcode2024",
+  "version": "1.0.0",
+  "description": "My solutions for the Advent of Code 2024 programming puzzles",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "NuclearRedeye",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NuclearRedeye/adventofcode2024.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "typescript": "^5.7.2"
+  }
+}
