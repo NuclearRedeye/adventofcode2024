@@ -110,9 +110,9 @@ console.log(`- Exercise 1 = '${answer}'`);
 
 // Exercise 2: Test Case
 answer = exercise2(test);
-console.log(`- Exercise 2 Test = '${answer}'`);
+
 console.assert(answer === 9);
 
-// Exercise 1: Answer
+// Exercise 2: Answer
 answer = exercise2(real);
 console.log(`- Exercise 2 = '${answer}'`);
