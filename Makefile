@@ -1,5 +1,7 @@
 PROJECT := $(notdir $(CURDIR))
 
+SOURCES=$(shell find ./src/* -name "day*" -exec basename {} \;)
+
 # Targets that don't result in output of the same name.
 .PHONY: distclean \
         start
@@ -17,6 +19,9 @@ node_modules: package.json
 	@npm install
 	@-touch node_modules
 
-# Execute the exercise.
-start: node_modules
-	@node --experimental-strip-types ./src/day1.ts
+# Execute a specific exercise.
+%.ts: node_modules
+	@node --disable-warning=ExperimentalWarning --experimental-strip-types ./src/$@
+
+# Execute ALL exercises.
+start: $(SOURCES)
