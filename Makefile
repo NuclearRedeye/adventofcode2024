@@ -10,7 +10,7 @@ SOURCES=$(shell find ./src/* -name "day*" -exec basename {} \;)
 .DEFAULT_GOAL := start
 
 # Target that cleans build output and local dependencies.
-distclean: clean
+distclean:
 	@rm -rf node_modules
 
 # Target to install Node.js dependencies.
