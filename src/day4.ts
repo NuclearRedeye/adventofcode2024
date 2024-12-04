@@ -2,8 +2,6 @@ import { readFile } from './utils.ts';
 
 const day = 4;
 
-const re = new RegExp(/(\d+)/g);
-
 type preparedData = string[][];
 
 type Vector = {
