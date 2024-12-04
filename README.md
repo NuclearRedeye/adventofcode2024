@@ -15,7 +15,7 @@ You can run all solutions using...
 make
 ```
 
-Or, you can run a specific solution using
+Or, you can run a specific solution using...
 
 ```
 make day3.ts
