@@ -2,6 +2,7 @@
 import type { Vector } from './types/vector.ts';
 import { readFile } from './utils/file-utils.ts';
 import * as vu from './utils/vector-utils.ts';
+import * as au from './utils/array-utils.ts';
 
 const day = 6;
 
@@ -78,10 +79,7 @@ function exercise2(data: preparedData): number {
     const position = vu.fromString(entry) as Vector;
     
     // clone the map
-    const map: string[][] = []
-    for (let y = 0; y < data.map.length; y++) {
-      map[y] = [...data.map[y]];
-    }
+    const map: string[][] = au.clone2d(data.map);
 
     // update the position to be wall
     map[position.y][position.x] = '#';
