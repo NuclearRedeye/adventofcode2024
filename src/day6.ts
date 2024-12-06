@@ -1,6 +1,6 @@
 
 import type { Vector } from './types/vector.ts';
-import { readFile } from './utils.ts';
+import { readFile } from './utils/file-utils.ts';
 
 const day = 6;
 

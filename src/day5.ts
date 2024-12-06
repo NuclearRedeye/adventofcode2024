@@ -1,4 +1,4 @@
-import { readFile } from './utils.ts';
+import { readFile } from './utils/file-utils.ts';
 
 const day = 5;
 
