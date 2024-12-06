@@ -1,6 +1,7 @@
 
 import type { Vector } from './types/vector.ts';
 import { readFile } from './utils/file-utils.ts';
+import * as vu from './utils/vector-utils.ts';
 
 const day = 6;
 
@@ -12,28 +13,18 @@ type preparedData = {
 function prepareData(data: string[]): preparedData {
   const retVal: preparedData = {
     map: [],
-    guard: {x: 0, y: 0}
+    guard: vu.create(0, 0)
   }
 
   for (let y = 0; y < data.length; y++) {
     retVal.map[y] = [...data[y]];
     if (retVal.map[y].indexOf('^') !== -1) {
-      retVal.guard = {
-        y,
-        x: retVal.map[y].indexOf('^')
-      }
+      retVal.guard = vu.create(retVal.map[y].indexOf('^'), y);
     }
   }
 
   return retVal;
 };
-
-export function rotateVector(v: Vector, radians: number): Vector {
-  return {
-    x: Math.round(v.x * Math.cos(radians) - v.y * Math.sin(radians)),
-    y: Math.round(v.x * Math.sin(radians) + v.y * Math.cos(radians))
-  };
-}
 
 type Path = {
   resolved: boolean;
@@ -44,17 +35,14 @@ function getPath(map: string[][], start: Vector, direction: Vector, match: strin
   let resolved = false;
   const path: Set<string> = new Set();
 
-  path.add(`${start.x},${start.y}`);
+  path.add(vu.toString(start));
 
   let current: Vector = {...start};
 
   let count = 0;
   do {
 
-    let next: Vector = {
-      x: current.x + direction.x,
-      y: current.y + direction.y
-    };
+    let next: Vector = vu.add(current, direction);
   
     if (next.y < 0 || next.y >= map.length || next.x < 0 || next.x >= map[next.y].length) {
       resolved = true;
@@ -62,18 +50,13 @@ function getPath(map: string[][], start: Vector, direction: Vector, match: strin
     }
 
     if (map[next.y][next.x] === match) {
-      direction = rotateVector(direction, 1.570796)
+      direction = vu.round(vu.rotate(direction, 1.570796));
       continue;
     }
 
     current = next;
-
-    const posAsString = `${current.x},${current.y}`;
-    if (path.has(posAsString)) {
-      continue;
-    }
     
-    path.add(posAsString);
+    path.add(vu.toString(current));
   } while(count++ < (map.length * map[0].length))
 
   return {
@@ -83,20 +66,16 @@ function getPath(map: string[][], start: Vector, direction: Vector, match: strin
 }
 
 function exercise1(data: preparedData): number {
-  const path = getPath(data.map, data.guard, {x:0, y:-1}, '#');
+  const path = getPath(data.map, data.guard, vu.create(0, -1), '#');
   return path.path.size
 };
 
 function exercise2(data: preparedData): number {
   let retVal = 0;
-  const path = getPath(data.map, data.guard, {x:0, y:-1}, '#')
+  const path = getPath(data.map, data.guard, vu.create(0, -1), '#')
   for (const entry of path.path.values()) {
 
-    const positionString = entry.split(',');
-    const position: Vector = {
-      x: parseInt(positionString[0]),
-      y: parseInt(positionString[1])
-    };
+    const position = vu.fromString(entry) as Vector;
     
     // clone the map
     const map: string[][] = []
@@ -108,7 +87,7 @@ function exercise2(data: preparedData): number {
     map[position.y][position.x] = '#';
 
     // check if the path resolves or loops
-    const check = getPath(map, data.guard, {x:0, y:-1}, '#');
+    const check = getPath(map, data.guard, vu.create(0, -1), '#');
     if (!check.resolved) {
       retVal += 1;
     }
