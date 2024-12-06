@@ -107,6 +107,7 @@ console.assert(answer === 18);
 // Exercise 1: Answer
 answer = exercise1(real);
 console.log(`- Exercise 1 = '${answer}'`);
+console.assert(answer === 2603);
 
 // Exercise 2: Test Case
 answer = exercise2(test);
@@ -116,3 +117,4 @@ console.assert(answer === 9);
 // Exercise 2: Answer
 answer = exercise2(real);
 console.log(`- Exercise 2 = '${answer}'`);
+console.assert(answer === 1965);
