@@ -1,13 +1,10 @@
+
+import type { Vector } from './types/vector.ts';
 import { readFile } from './utils.ts';
 
 const day = 4;
 
 type preparedData = string[][];
-
-type Vector = {
-  x: number;
-  y: number;
-}
 
 function prepareData(data: string[]): preparedData {
   const retVal: preparedData = [];

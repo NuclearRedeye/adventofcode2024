@@ -1,11 +1,8 @@
+
+import type { Vector } from './types/vector.ts';
 import { readFile } from './utils.ts';
 
 const day = 6;
-
-type Vector = {
-  x: number;
-  y: number;
-}
 
 type preparedData = {
   map: string[][];
