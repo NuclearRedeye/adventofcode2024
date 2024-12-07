@@ -37,43 +37,30 @@ function prepareData(data: string[]): preparedData {
 };
 
 
-const getPermutations = (operators: string[], rounds: number) => {
-  //if rounds is 0 we will return an empty array
-  if(rounds === 0) return []
+function getPermutations<Type>(operators: number[], iterations: number): Type[] {
 
-  // define a throw options array for each play we could make
-  // "R" represents "Rock", "P" represents "Paper", "S" represents "Scissors"
-  const throwOptions = ['0', '2']
-  // define a solutions array to hold all of our possible solutions
-  const solutions: string[] = []
+  const permutations: Type[] = [];
 
-  const combinations = (solution = '') => {
-    //base case definition
-    if(solution.length === rounds){
-      return solutions.push(solution)
+  const combinations = (solution: Type[] = []) => {
+    if(solution.length === iterations) {
+      permutations.push(solution as Type);
+      return;
     }
     operators.forEach(option => {
-      combinations(solution + option)
+      combinations([...solution, option])
     })
   }
 
-  combinations()
+  combinations();
 
-  // return the solutions array
-  return solutions
+  return permutations
 }
 
-function calculate(equation: Equation, operators: string[]): number[] {
+function calculate(equation: Equation, operators: number[]): number[] {
   const retVal = [];
 
   // 1. Calculate operator permutations based on length of equations values;
-  const permutations: number[][] = [];
-
-  const meh = getPermutations(operators, equation.values.length - 1);
-  for (const item of meh) {
-    permutations.push([...item].map((n) => parseInt(n)))
-    //console.log(permutations[permutations.length -1]);
-  }
+  const permutations: number[][] = getPermutations(operators, equation.values.length - 1);
 
   // 2. Run the calculation for each permutation, and add the result to the return array.
   for (const permutation of permutations) {
@@ -97,7 +84,7 @@ function calculate(equation: Equation, operators: string[]): number[] {
 function exercise1(data: preparedData): number {
   let retVal = 0;
 
-  const operators = ['0', '2']; // [Operators.ADD, Operators.MULTIPLY]
+  const operators = [0, 2]; // [Operators.ADD, Operators.MULTIPLY]
   for (const equation of data) {
 
     const calculation = calculate(equation, operators);
@@ -114,7 +101,7 @@ function exercise1(data: preparedData): number {
 function exercise2(data: preparedData): number {
   let retVal = 0;
 
-  const operators = ['0', '2', '4']; // [Operators.ADD, Operators.MULTIPLY, Operators.CONCAT]
+  const operators = [0, 2, 4]; // [Operators.ADD, Operators.MULTIPLY, Operators.CONCAT]
   for (const equation of data) {
 
     const calculation = calculate(equation, operators);
