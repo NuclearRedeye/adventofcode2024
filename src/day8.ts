@@ -7,7 +7,6 @@ const day = 8;
 
 type preparedData = string[][]
 
-
 function prepareData(data: string[]): preparedData {
   const retVal: preparedData = [];
 
@@ -40,7 +39,7 @@ function exercise1(data: preparedData): number {
 
   const transmitters: Map<string, Vector[]> = getTransmitters(data);
 
-  for (const [key, values] of transmitters.entries()) {
+  for (const values of transmitters.values()) {
     for (let i = 0; i < values.length; i++) {
       for (let ii = 0; ii < values.length; ii++) {
         if (ii === i)
@@ -65,7 +64,7 @@ function exercise2(data: preparedData): number {
 
   const transmitters: Map<string, Vector[]> = getTransmitters(data);
 
-  for (const [key, values] of transmitters.entries()) {
+  for (const values of transmitters.values()) {
     for (let i = 0; i < values.length; i++) {
       for (let ii = 0; ii < values.length; ii++) {
         if (ii === i)
