@@ -45,7 +45,7 @@ function getPath(map: string[][], start: Vector, direction: Vector, match: strin
 
     let next: Vector = vu.add(current, direction);
   
-    if (next.y < 0 || next.y >= map.length || next.x < 0 || next.x >= map[next.y].length) {
+    if (!au.isInBounds2d(map, next)) {
       resolved = true;
       break;
     }
