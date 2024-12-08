@@ -20,7 +20,6 @@ enum Operators {
 
 type preparedData = Equation[]
 
-const re = new RegExp(/^\((?<x>\d+),(?<y>\d+)\)$/);
 
 function prepareData(data: string[]): preparedData {
   const retVal: preparedData = [];
@@ -38,20 +37,16 @@ function prepareData(data: string[]): preparedData {
 
 
 function getPermutations<Type>(operators: number[], iterations: number): Type[] {
-
   const permutations: Type[] = [];
-
-  const combinations = (solution: Type[] = []) => {
-    if(solution.length === iterations) {
+  const combinations = (solution: Type[]) => {
+    if (solution.length === iterations) {
       permutations.push(solution as Type);
       return;
     }
-    operators.forEach(option => {
-      combinations([...solution, option])
-    })
+    operators.map(option => combinations([...solution, option]));
   }
 
-  combinations();
+  combinations([]);
 
   return permutations
 }
