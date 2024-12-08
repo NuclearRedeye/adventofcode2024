@@ -1,6 +1,7 @@
 import type { Vector } from './types/vector.ts';
 import { readFile } from './utils/file-utils.ts';
 import * as vu from './utils/vector-utils.ts';
+import * as au from './utils/array-utils.ts';
 
 const day = 8;
 
@@ -47,7 +48,7 @@ function exercise1(data: preparedData): number {
 
         const delta: Vector = vu.subtract(values[ii], values[i]);
         const consider: Vector = vu.subtract(values[i], delta);
-        if (consider.x < 0 || consider.x >= data[0].length || consider.y < 0 || consider.y >= data.length) {
+        if (!au.isInBounds2d(data, consider)) {
           continue;
         }
 
@@ -72,7 +73,7 @@ function exercise2(data: preparedData): number {
 
         const delta: Vector = vu.subtract(values[ii], values[i]);
         let consider: Vector = vu.add(values[i], delta);
-        while (consider.x >= 0 && consider.x < data[0].length && consider.y >= 0 && consider.y < data.length) {
+        while (au.isInBounds2d(data, consider)) {
           retVal.add(vu.toString(consider));
           consider = vu.add(consider, delta);
         }
