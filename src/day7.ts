@@ -43,7 +43,7 @@ function getPermutations<Type>(operators: number[], iterations: number): Type[] 
       permutations.push(solution as Type);
       return;
     }
-    operators.map(option => combinations([...solution, option]));
+    operators.map(option => combinations([...solution as Type[], option as Type]));
   }
 
   combinations([]);
