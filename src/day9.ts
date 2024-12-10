@@ -1,4 +1,5 @@
 import { readFile } from './utils/file-utils.ts';
+import * as au from './utils/array-utils.ts';
 
 const day = 9;
 
@@ -36,16 +37,8 @@ function prepareData(data: string[]): preparedData {
 };
 
 
-function copyArray(data: preparedData): preparedData {
-  const retVal: preparedData = new Array(data.length);
-  for (let i = 0; i < data.length; i++) {
-    retVal[i] = {...data[i]};
-  } 
-  return retVal;
-}
-
 function exercise1(data: preparedData): number {
-  const compacted = copyArray(data);
+  const compacted = au.clone(data);
 
   let last = compacted.length - 1;
   for (let i = 0; i < compacted.length; i++) {
@@ -72,7 +65,7 @@ function exercise1(data: preparedData): number {
 };
 
 function exercise2(data: preparedData): number {
-  const compacted = copyArray(data);
+  const compacted = au.clone(data);
 
   for (let end = compacted.length - 1; end >= 0; end--) {
     if (compacted[end].fid !== -1) {
