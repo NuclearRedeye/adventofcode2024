@@ -13,21 +13,21 @@ type preparedData = Block[];
 function prepareData(data: string[]): preparedData {
   const retVal: preparedData = [];
 
-  if (data.length === 1) {
+  for (const line of data) {
     let fid = 0;
     let bid = 0;
-    for (let i = 0; i < data[0].length; i++) {
-      const isFile = i & 0x1;
-      const value = parseInt(data[0][i]);
+    for (let i = 0; i < line.length; i++) {
+      const isFreeSpace = (i & 0x1);
+      const value = parseInt(line[i]);
       for (let x = 0; x < value; x++) {
         retVal.push({
           bid: bid++,
-          fid: (isFile) ? -1 : fid,
+          fid: isFreeSpace ? -1 : fid,
           size: value
-        })
+        });
       }
-      if (isFile) {
-        fid++
+      if (isFreeSpace) {
+        fid++;
       }
     }
   }
