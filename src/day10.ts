@@ -31,8 +31,9 @@ function getPaths(data: preparedData, current: Vector, target: number, result: s
       if (data[current.y][current.x] + 1 === data[consider.y][consider.x]) {
         if (data[consider.y][consider.x] === target) {
           found.push(vu.toString(consider));
+        } else {
+          getPaths(data, consider, target, found);
         }
-        getPaths(data, consider, target, found);
       }
     }
   }
@@ -45,10 +46,7 @@ function exercise1(data: preparedData): number {
   for (let y = 0; y < data.length; y++) {
     for (let x = 0; x < data[y].length; x++) {
       if (data[y][x] === 0) {
-        const result = getPaths(data, vu.create(x, y), 9);
-        const unique = new Set(result);
-        console.log(`Found ${unique.size} paths for train head starting at ${vu.toString({x,y})}`);
-        retVal += unique.size;
+        retVal += new Set(getPaths(data, vu.create(x, y), 9)).size;
       }
     }
   }
@@ -60,9 +58,7 @@ function exercise2(data: preparedData): number {
   for (let y = 0; y < data.length; y++) {
     for (let x = 0; x < data[y].length; x++) {
       if (data[y][x] === 0) {
-        const result = getPaths(data, vu.create(x, y), 9);
-        console.log(`Found ${result.length} paths for train head starting at ${vu.toString({x,y})}`);
-        retVal += result.length;
+        retVal += getPaths(data, vu.create(x, y), 9).length;
       }
     }
   }
