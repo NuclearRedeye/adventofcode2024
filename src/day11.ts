@@ -14,33 +14,31 @@ function prepareData(data: string[]): preparedData {
 
 const cache = new Map<string, number>();
 
-function blink(data: bigint, depth: number): number {
+function blink(value: bigint, depth: number): number {
 
-  if (cache.has(`(${data},${depth})`)) {
-    return cache.get(`(${data},${depth})`) as number;
+  if (cache.has(`(${value},${depth})`)) {
+    return cache.get(`(${value},${depth})`) as number;
   }
 
   let retVal = 0;
-  const numberStr = data.toString()
+  const numberStr = value.toString();
 
-  if (depth === 0)
+  if (depth === 0) {
     retVal = 1;
-  
-  else if (data === 0n)
+  }
+  else if (value === 0n) {
     retVal = blink(1n, depth - 1);
-
-
+  }
   else if (!(numberStr.length & 0x1)) {
     const left = BigInt(numberStr.substring(0, numberStr.length / 2));
     const right = BigInt(numberStr.substring(numberStr.length / 2));
     retVal = blink(left, depth - 1) + blink(right, depth - 1);
   }
-
   else {
-    retVal = blink(data * 2024n, depth - 1);
+    retVal = blink(value * 2024n, depth - 1);
   }
 
-  cache.set(`(${data},${depth})`, retVal);
+  cache.set(`(${value},${depth})`, retVal);
   return retVal;
 }
 
@@ -52,7 +50,7 @@ function exercise1(data: preparedData): number {
   return retVal;
 };
 
-function exercise2(data: preparedData, depth: number = 75): number {
+function exercise2(data: preparedData): number {
   let retVal = 0;
   for (const number of data) {
     retVal += blink(number, 75);
