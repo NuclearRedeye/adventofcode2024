@@ -18,6 +18,9 @@ export function clone(v: Vector): Vector {
   return { ...v };
 }
 
+export function equals(a: Vector, b: Vector): boolean {
+  return (a.x === b.x && a.y === b.y);
+}
 
 export function round(v: Vector): Vector {
   return {
