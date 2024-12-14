@@ -21,7 +21,6 @@ function prepareData(data: string[]): preparedData {
 
   for (let i = 0; i < data.length; i++) {
     const match = data[i].match(re);
-    console.log(match)
     if (match) {
       const robot: Robot = {
         position: vu.create(parseInt(match[1]), parseInt(match[2])),
@@ -96,8 +95,59 @@ function exercise1(data: preparedData, boundary: Vector = {x: 101, y: 103}): num
   return retVal;
 };
 
-function exercise2(data: preparedData): number {
+function print(robots: Robot[], boundary: Vector = {x: 101, y: 103}, label: number): boolean {
+  const retVal = false;
+  const grid: number[][] = [];
+  for (let y = 0; y < boundary.y; y++) {
+    grid.push(new Array(boundary.x).fill(0));
+  }
+
+  for (const robot of robots) {
+    grid[robot.position.y][robot.position.x] += 1;
+  }
+
+  let max = 0;
+  let length = 0;
+  for (let y = 0; y < boundary.y; y++) {
+    for (let x = 0; x < boundary.x; x++) {
+      if (grid[y][x] > 0) {
+        length += 1;
+      } else {
+        max = Math.max(length, max);
+        length = 0;
+      }
+    }
+    length = 0;
+  }
+
+  if (max >= 10) {
+    console.log(`Iteration ${label}...`)
+    for (const row of grid) {
+      console.log(row.join('').replaceAll('0',' '));
+    }
+    return true;
+  }
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function exercise2(data: preparedData, boundary: Vector = {x: 101, y: 103}): Promise<number> {
   let retVal = 0;
+  const final: preparedData = au.clone(data);
+  for (let i = 0; i < 10000; i++) {
+    for (const robot of final) {
+      robot.position = move(robot, boundary);
+    }
+      
+    if (print(final, boundary, i)) {
+      retVal = i + 1;
+      break;
+    }
+  }
   return retVal;
 };
 
@@ -123,6 +173,6 @@ console.assert(answer === 219512160);
 // console.assert(answer === 480);
 
 // Exercise 2: Answer
-// answer = exercise2(real);
-// console.log(`- Exercise 2 = '${answer}'`);
-// console.assert(answer === 271691107779347);
+answer = await exercise2(real);
+console.log(`- Exercise 2 = '${answer}'`);
+console.assert(answer === 6398);
