@@ -71,6 +71,42 @@ function sumRegion(robots: Robot[], region: Rectangle): number {
   return retVal;
 }
 
+function createGrid(robots: Robot[], size: Vector): number[][] {
+  const retVal: number[][] = [];
+  for (let y = 0; y < size.y; y++) {
+    retVal.push(new Array(size.x).fill(0));
+  }
+
+  for (const robot of robots) {
+    retVal[robot.position.y][robot.position.x] += 1;
+  }
+
+  return retVal;
+}
+
+function getContinuityScore(grid: number[][]): number {
+  let retVal = 0;
+  let current = 0;
+  for (let y = 0; y < grid.length; y++) {
+    for (let x = 0; x < grid[x].length; x++) {
+      if (grid[y][x] > 0) {
+        current += 1;
+      } else {
+        retVal = Math.max(current, retVal);
+        current = 0;
+      }
+    }
+    current = 0;
+  }
+  return retVal;
+}
+
+function printGrid(grid: number[][]): void {
+  for (const row of grid) {
+    console.log(row.join('').replaceAll('0',' '));
+  }
+}
+
 function exercise1(data: preparedData, boundary: Vector = {x: 101, y: 103}): number {
   let retVal = 1;
   const final: preparedData = au.clone(data);
@@ -95,55 +131,18 @@ function exercise1(data: preparedData, boundary: Vector = {x: 101, y: 103}): num
   return retVal;
 };
 
-function print(robots: Robot[], boundary: Vector = {x: 101, y: 103}, label: number): boolean {
-  const retVal = false;
-  const grid: number[][] = [];
-  for (let y = 0; y < boundary.y; y++) {
-    grid.push(new Array(boundary.x).fill(0));
-  }
-
-  for (const robot of robots) {
-    grid[robot.position.y][robot.position.x] += 1;
-  }
-
-  let max = 0;
-  let length = 0;
-  for (let y = 0; y < boundary.y; y++) {
-    for (let x = 0; x < boundary.x; x++) {
-      if (grid[y][x] > 0) {
-        length += 1;
-      } else {
-        max = Math.max(length, max);
-        length = 0;
-      }
-    }
-    length = 0;
-  }
-
-  if (max >= 10) {
-    console.log(`Iteration ${label}...`)
-    for (const row of grid) {
-      console.log(row.join('').replaceAll('0',' '));
-    }
-    return true;
-  }
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
-async function exercise2(data: preparedData, boundary: Vector = {x: 101, y: 103}): Promise<number> {
+function exercise2(data: preparedData, boundary: Vector = {x: 101, y: 103}): number {
   let retVal = 0;
   const final: preparedData = au.clone(data);
   for (let i = 0; i < 10000; i++) {
     for (const robot of final) {
       robot.position = move(robot, boundary);
     }
-      
-    if (print(final, boundary, i)) {
+
+    const grid = createGrid(final, boundary);
+    if (getContinuityScore(grid) >= 10) {
+      console.log(`Iteration ${i}`)
+      printGrid(grid);
       retVal = i + 1;
       break;
     }
