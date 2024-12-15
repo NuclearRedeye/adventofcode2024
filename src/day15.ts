@@ -1,10 +1,8 @@
 import type { Vector } from './types/vector.ts';
-import type { Rectangle } from './types/rectangle.ts';
 
 import { readFile } from './utils/file-utils.ts';
 import * as vu from './utils/vector-utils.ts';
 import * as au from './utils/array-utils.ts';
-import { rejects } from 'assert';
 
 const day = 15;
 
@@ -13,8 +11,6 @@ type preparedData = {
   warehouse: number[][];
   moves: Vector[];
 }
-
-const re = new RegExp(/^p\=(\d+),(\d+) v\=(-?\d+),(-?\d+)$/);
 
 function prepareData(data: string[]): preparedData {
   const retVal: preparedData = {
@@ -146,7 +142,7 @@ console.assert(answer === 1415498);
 // Exercise 2: Test Case
 // answer = exercise2(test);
 // console.log(`- Test 2 = '${answer}'`);
-// console.assert(answer === 480);
+// console.assert(answer === 9021);
 
 // Exercise 2: Answer
 // answer = await exercise2(real);
