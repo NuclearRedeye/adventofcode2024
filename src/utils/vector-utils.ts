@@ -7,6 +7,18 @@ export type Radian = number;
 
 const re = new RegExp(/^\((?<x>\d+),(?<y>\d+)\)$/);
 
+export const origin: Vector = {
+  x: 0,
+  y: 0
+};
+
+export const cardinals: Vector[] = [
+  {x: 0, y: -1}, // North
+  {x: 1, y: 0},  // East
+  {x: 0, y: 1},  // South
+  {x: -1, y: 0},  // West
+];
+
 export function create(x: number = 0, y: number = 0): Vector {
   return {
     x,

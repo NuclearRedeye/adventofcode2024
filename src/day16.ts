@@ -6,12 +6,6 @@ import * as au from './utils/array-utils.ts';
 
 const day = 16;
 
-type Entity = {
-  position: Vector;
-  direction: Vector;
-  score: number;
-}
-
 type preparedData = {
   start: Vector;
   end: Vector;
@@ -40,49 +34,28 @@ function prepareData(data: string[]): preparedData {
   return retVal;
 };
 
-function printMaze(maze: number[][], entity: Entity) {
-  for (let y = 0; y < maze.length; y++) {
-    const line: string[] = [];
-    for (let x = 0; x < maze[y].length; x++) {
-      if (vu.equals(entity.position, vu.create(x, y))) {
-        if (entity.direction.x === 1) line.push('>');
-        if (entity.direction.x === -1) line.push('<');
-        if (entity.direction.y === 1) line.push('V');
-        if (entity.direction.y === -1) line.push('^');
-      }
-      else {
-        switch (maze[y][x]) {
-          case -1: line.push('#'); break;
-          case 0:  line.push('.'); break;
-          default: break;
-        }
-      }
-    }
-    console.log(line.join(''));
-  }
-}
-
 type Evaluation = {
   position: Vector;
   direction: Vector;
-  score: number
+  score: number;
+  path: Vector[];
 }
 
-const cardinals: Vector[] = [
-  {x: 0, y: -1}, // North
-  {x: 1, y: 0},  // East
-  {x: 0, y: 1},  // South
-  {x: -1, y: 0},  // West
-];
+type Result = {
+  score: number;
+  tiles: number;
+}
 
-function solve(maze: preparedData): number {
+function solve(maze: preparedData): Result {
   let retVal = 0;
   const queue: Evaluation[] = [{
     position: vu.clone(maze.start),
     direction: {x: 1, y: 0},
-    score: 0
+    score: 0,
+    path: [maze.start]
   }];
 
+  const routes: Evaluation[] = [];
   const visited: Map<string, number> = new Map<string, number>();
 
   do {
@@ -95,24 +68,30 @@ function solve(maze: preparedData): number {
 
     // Have we checked this before?
     if (visited.has(`${vu.toString(current.position)}:${vu.toString(current.direction)}`)) {
-      if ((visited.get(`${vu.toString(current.position)}:${vu.toString(current.direction)}`) as number) <= current.score) {
+      if ((visited.get(`${vu.toString(current.position)}:${vu.toString(current.direction)}`) as number) < current.score) {
         continue;
       }
     }
 
-    // Are we at the end?
+    // Are we at the end point?
     if (vu.equals(maze.end, current.position)) {
-      //console.log(`Found path: previous ${retVal}: current: ${current.score}`)
       retVal = (retVal > 0) ? Math.min(retVal, current.score) : current.score;
+      routes.push(current);
     }
 
     // Queue all valid moves from this position in the maze...
-    for (const cardinal of cardinals) {
+    for (const cardinal of vu.cardinals) {
 
-      const next = {
+      const next: Evaluation = {
         position: vu.add(current.position, cardinal),
         direction: cardinal,
-        score: vu.equals(current.direction, cardinal) ? current.score + 1 : current.score + 1001
+        score: vu.equals(current.direction, cardinal) ? current.score + 1 : current.score + 1001,
+        path: []
+      }
+
+      // Is the current score for this potential path already higher than the best route we've found, if so give up...
+      if (retVal > 0 && next.score > retVal) {
+        continue;
       }
 
       // Bounds Check
@@ -126,16 +105,19 @@ function solve(maze: preparedData): number {
       }
 
       // Ignore 180
-      if (vu.equals(vu.add(current.direction, cardinal), {x: 0, y: 0})) {
-        //continue;
+      if (vu.equals(vu.add(current.direction, cardinal), vu.origin)) {
+        continue;
       }
 
       // Have we been there before?
       if (visited.has(`${vu.toString(next.position)}:${vu.toString(next.direction)}`)) {
-        if ((visited.get(`${vu.toString(next.position)}:${vu.toString(next.direction)}`) as number) <= next.score) {
+        if ((visited.get(`${vu.toString(next.position)}:${vu.toString(next.direction)}`) as number) < next.score) {
           continue;
         }
       }
+
+      // Update Path
+      next.path = [...current.path, vu.add(current.position, cardinal)];
 
       // Add to the queue
       queue.push(next);
@@ -145,17 +127,28 @@ function solve(maze: preparedData): number {
     visited.set(`${vu.toString(current.position)}:${vu.toString(current.direction)}`, current.score);
 
   } while (queue.length > 0);
+
+  const unique: Set<string> = new Set<string>();
+  for (const route of routes) {
+    if (route.score === retVal) {
+      for (const tile of route.path) {
+        unique.add(vu.toString(tile));
+      }
+    }
+  }
   
-  return retVal;
+  return {
+    score: retVal,
+    tiles: unique.size
+  }
 }
 
 function exercise1(data: preparedData): number {
-  return solve(data);
+  return solve(data).score;
 };
 
 function exercise2(data: preparedData): number {
-  let retVal = 0;
-  return retVal;
+  return solve(data).tiles;
 };
 
 console.log(`Advent of Code 2024: Day ${day}`);
@@ -167,25 +160,30 @@ const real = prepareData(await readFile(`./data/day${day}/data.txt`));
 
 // Exercise 1: Test Case
 let answer = exercise1(test);
-console.log(`- Test 1 = '${answer}'`);
+console.log(`- Test 1.1 = '${answer}'`);
 console.assert(answer === 7036);
 
 // Exercise 1: Test Case 2
 answer = exercise1(test2);
-console.log(`- Test 2 = '${answer}'`);
+console.log(`- Test 1.2 = '${answer}'`);
 console.assert(answer === 11048);
 
 // Exercise 1: Answer
 answer = exercise1(real);
 console.log(`- Exercise 1 = '${answer}'`);
-console.assert(answer === 1415498);
+console.assert(answer === 85420);
 
 // Exercise 2: Test Case
-// answer = exercise2(test);
-// console.log(`- Test 2 = '${answer}'`);
-// console.assert(answer === 9021);
+answer = exercise2(test);
+console.log(`- Test 2.1 = '${answer}'`);
+console.assert(answer === 45);
+
+// Exercise 2: Test Case 2
+answer = exercise2(test2);
+console.log(`- Test 2.1 = '${answer}'`);
+console.assert(answer === 64);
 
 // Exercise 2: Answer
-// answer = await exercise2(real);
-// console.log(`- Exercise 2 = '${answer}'`);
-// console.assert(answer === 6398);
+answer = exercise2(real);
+console.log(`- Exercise 2 = '${answer}'`);
+console.assert(answer === 492);
