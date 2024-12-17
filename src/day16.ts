@@ -37,6 +37,7 @@ function prepareData(data: string[]): preparedData {
 type Evaluation = {
   position: Vector;
   direction: Vector;
+  distance: number;
   score: number;
   previous: Evaluation | undefined;
 }
@@ -51,6 +52,7 @@ function solve(maze: preparedData): Result {
   const queue: Evaluation[] = [{
     position: vu.clone(maze.start),
     direction: {x: 1, y: 0},
+    distance: Math.abs(vu.subtract(maze.end, maze.start).x + vu.subtract(maze.end, maze.start).y),
     score: 0,
     previous: undefined
   }];
@@ -59,7 +61,7 @@ function solve(maze: preparedData): Result {
   const visited: Map<string, number> = new Map<string, number>();
 
   do {
-    const current: Evaluation = queue.pop() as Evaluation;
+    const current: Evaluation = queue.shift() as Evaluation;
 
     // Ensure we're in bounds
     if (!au.isInBounds2d(maze.maze, current.position)) {
@@ -85,6 +87,7 @@ function solve(maze: preparedData): Result {
       const next: Evaluation = {
         position: vu.add(current.position, cardinal),
         direction: cardinal,
+        distance: Math.abs((maze.end.x - current.position.x + cardinal.x) + (maze.end.y - current.position.y + cardinal.y)),
         score: vu.equals(current.direction, cardinal) ? current.score + 1 : current.score + 1001,
         previous: current
       }
@@ -119,6 +122,9 @@ function solve(maze: preparedData): Result {
       // Add to the queue
       queue.push(next);
     }
+
+    // Sort the list.
+    queue.sort((a, b) => a.distance - b.distance);
 
     // Mark this as visited.
     visited.set(`${vu.toString(current.position)}:${vu.toString(current.direction)}`, current.score);
