@@ -38,7 +38,7 @@ type Evaluation = {
   position: Vector;
   direction: Vector;
   score: number;
-  path: Vector[];
+  previous: Evaluation | undefined;
 }
 
 type Result = {
@@ -52,7 +52,7 @@ function solve(maze: preparedData): Result {
     position: vu.clone(maze.start),
     direction: {x: 1, y: 0},
     score: 0,
-    path: [maze.start]
+    previous: undefined
   }];
 
   const routes: Evaluation[] = [];
@@ -86,7 +86,7 @@ function solve(maze: preparedData): Result {
         position: vu.add(current.position, cardinal),
         direction: cardinal,
         score: vu.equals(current.direction, cardinal) ? current.score + 1 : current.score + 1001,
-        path: []
+        previous: current
       }
 
       // Is the current score for this potential path already higher than the best route we've found, if so give up...
@@ -116,9 +116,6 @@ function solve(maze: preparedData): Result {
         }
       }
 
-      // Update Path
-      next.path = [...current.path, vu.add(current.position, cardinal)];
-
       // Add to the queue
       queue.push(next);
     }
@@ -131,9 +128,11 @@ function solve(maze: preparedData): Result {
   const unique: Set<string> = new Set<string>();
   for (const route of routes) {
     if (route.score === retVal) {
-      for (const tile of route.path) {
-        unique.add(vu.toString(tile));
-      }
+      let tile: Evaluation | undefined = route;
+      do {
+        unique.add(vu.toString(tile.position));
+        tile = tile?.previous;
+      } while (tile !== undefined);
     }
   }
   
