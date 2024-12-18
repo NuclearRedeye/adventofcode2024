@@ -3,6 +3,7 @@ import type { Vector } from './types/vector.ts';
 import { readFile } from './utils/file-utils.ts';
 import * as vu from './utils/vector-utils.ts';
 import * as au from './utils/array-utils.ts';
+import * as pu from './utils/pathfinding-utils.ts';
 
 const day = 18;
 
@@ -52,85 +53,16 @@ function generateMaze(data: preparedData, extents: Vector, ticks: number): numbe
   return retVal;
 }
 
-function solve(maze: number[][], start: Vector, end: Vector): number {
-  let retVal = 0;
-
-  const openList: Evaluation[] = [{
-    position: start,
-    direction: vu.create(1, 0),
-    parent: undefined
-  }];
-
-  const closedList: Evaluation[] = [];
-
-  do {
-    let currentNode = openList.shift() as Evaluation;
-
-    // Have we reached the end?
-    if (vu.equals(currentNode.position, end)) {
-      let path: Evaluation[] = [];
-      let current = currentNode;
-      while (current) {
-        path.push(current);
-        current = current.parent as Evaluation;
-      }
-      retVal = (retVal > 0) ? Math.min(retVal, path.length - 1) : path.length - 1;
-      // console.log(`Route: current best is ${retVal}`);
-      // printMazePath(maze, path);
-    }
-
-    // Queue all valid moves from this position in the maze...
-    for (const cardinal of vu.cardinals) {
-
-      const next: Evaluation = {
-        position: vu.add(currentNode.position, cardinal),
-        direction: cardinal,
-        parent: currentNode
-      }
-
-      // Bounds Check
-      if (!au.isInBounds2d(maze, next.position)) {
-        continue;
-      }
-
-      // Is it Wall?
-      if (maze[next.position.y][next.position.x] === -1) {
-        continue;
-      }
-
-      // Have we been there before?
-      if (closedList.find((node) => vu.equals(next.position, node.position) && vu.equals(next.direction, node.direction))) {
-        continue;
-      }
-
-      // Is this node already on the queue?
-      const openListNode = openList.find((node) => vu.equals(next.position, node.position) && vu.equals(next.direction, node.direction));
-      if (openListNode) {
-        continue;
-      }
-
-      // Add to the queue
-      openList.push(next);
-    }
-
-    // Update the closed list
-    closedList.push(currentNode);
-
-  } while (openList.length > 0);
-
-  return retVal;
-}
-
 function exercise1(data: preparedData, extents: Vector = vu.create(71,71), ticks: number = 1024): number {
   const maze = generateMaze(data, extents, ticks);
-  return solve(maze, vu.create(0,0), vu.create(extents.x - 1, extents.y - 1));
+  return pu.frontier(maze, vu.origin, vu.create(extents.x - 1, extents.y - 1), [-1]).length - 1;
 }
 
 function exercise2(data: preparedData, extents: Vector = vu.create(71,71), start: number = 1024): string {
   let retVal = vu.create(0,0);
   for (let i = data.length - 1; i > start; i--) {
     const maze = generateMaze(data, extents, i);
-    const solved = solve(maze, vu.create(0,0), vu.create(extents.x - 1, extents.y - 1));
+    const solved = pu.frontier(maze, vu.origin, vu.create(extents.x - 1, extents.y - 1), [-1]).length - 1;
     if (solved > 0) {
       retVal = data[i];
       break;
