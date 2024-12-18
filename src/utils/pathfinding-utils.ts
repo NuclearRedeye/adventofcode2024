@@ -11,9 +11,7 @@ export type Node = {
 
 export type Path = Node[];
 
-export function frontier<Type>(array: Type[][], start: Vector, end: Vector, avoid: Type[]): Path {
-  let retVal: Path = [];
-
+export function* frontier<Type>(array: Type[][], start: Vector, end: Vector, avoid: Type[]): Generator<Path> {
   const openList: Node[] = [{
     position: start,
     direction: vu.create(1, 0),
@@ -27,13 +25,13 @@ export function frontier<Type>(array: Type[][], start: Vector, end: Vector, avoi
 
     // Have we reached the end?
     if (vu.equals(currentNode.position, end)) {
+      let solution: Path = [];
       let current = currentNode;
       while (current) {
-        retVal.push(current);
+        solution.push(current);
         current = current.parent as Node;
       }
-      retVal = retVal.reverse();
-      break;
+      yield solution;
     }
 
     // Queue all valid moves from this position in the maze...
@@ -74,5 +72,5 @@ export function frontier<Type>(array: Type[][], start: Vector, end: Vector, avoi
 
   } while (openList.length > 0);
 
-  return retVal;
+  yield [];
 }

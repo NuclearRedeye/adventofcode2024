@@ -54,16 +54,22 @@ function generateMaze(data: preparedData, extents: Vector, ticks: number): numbe
 }
 
 function exercise1(data: preparedData, extents: Vector = vu.create(71,71), ticks: number = 1024): number {
+  let retVal = 0
   const maze = generateMaze(data, extents, ticks);
-  return pu.frontier(maze, vu.origin, vu.create(extents.x - 1, extents.y - 1), [-1]).length - 1;
+  const paths = pu.frontier(maze, vu.origin, vu.create(extents.x - 1, extents.y - 1), [-1]);
+  for (const path of paths) {
+    retVal = path.length - 1;
+    break;
+  }
+  return retVal;
 }
 
 function exercise2(data: preparedData, extents: Vector = vu.create(71,71), start: number = 1024): string {
   let retVal = vu.create(0,0);
   for (let i = data.length - 1; i > start; i--) {
     const maze = generateMaze(data, extents, i);
-    const solved = pu.frontier(maze, vu.origin, vu.create(extents.x - 1, extents.y - 1), [-1]).length - 1;
-    if (solved > 0) {
+    const path = pu.frontier(maze, vu.origin, vu.create(extents.x - 1, extents.y - 1), [-1]).next();
+    if (path.value.length > 0) {
       retVal = data[i];
       break;
     }
