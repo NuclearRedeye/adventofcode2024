@@ -1,4 +1,3 @@
-import { reverse } from "dns";
 import type { Vector } from "../types/vector";
 
 import * as vu from "./vector-utils.ts";
