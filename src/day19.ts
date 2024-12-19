@@ -32,26 +32,26 @@ function prepareData(data: string[]): preparedData {
   return retVal;
 };
 
-const cache: Map<string, boolean> = new Map<string, boolean>();
-function canCreateDisplay(target: string, words: string[]): boolean {
+const cache: Map<string, number> = new Map<string, number>();
+function canCreateDisplay(target: string, words: string[]): number {
   //console.log(target);
-  let retVal = false;
+  let retVal = 0;
 
   // If display is empty, then it was a match.
   if (!target) {
-    return true;
+    return 1;
   }
 
   // Have we got an answer for this string before? If so return that
   if (cache.has(target)) {
-    return cache.get(target) as boolean;
+    return cache.get(target) as number;
   }
       
   // For each pattern
   for (const word of words) {
     // Does the string starts with the pattern
-    if (target.startsWith(word) && canCreateDisplay(target.substring(word.length), words)) {
-      retVal = true;
+    if (target.startsWith(word)) {
+      retVal += canCreateDisplay(target.substring(word.length), words);
     }
   }
 
@@ -75,6 +75,10 @@ function exercise1(data: preparedData): number {
 
 function exercise2(data: preparedData): number {
   let retVal = 0;
+  for (const display of data.displays) {
+    retVal += canCreateDisplay(display, data.patterns);
+    cache.clear();
+  }
   return retVal;
 }
 
@@ -92,14 +96,14 @@ console.assert(answer === 6);
 // Exercise 1: Answer
 answer = exercise1(real);
 console.log(`- Exercise 1 = '${answer}'`);
-console.assert(answer === 258);
+console.assert(answer === 260);
 
-// // Exercise 2: Test Case
-// answer = exercise2(test);
-// console.log(`- Test 2 = '${answer}'`);
-// console.assert(answer === 0);
+// Exercise 2: Test Case
+answer = exercise2(test);
+console.log(`- Test 2 = '${answer}'`);
+console.assert(answer === 16);
 
-// // Exercise 2: Answer
-// answer = exercise2(real);
-// console.log(`- Exercise 2 = '${answer}'`);
-// console.assert(answer === 0);
+// Exercise 2: Answer
+answer = exercise2(real);
+console.log(`- Exercise 2 = '${answer}'`);
+console.assert(answer === 639963796864990);
