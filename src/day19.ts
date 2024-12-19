@@ -34,31 +34,24 @@ function prepareData(data: string[]): preparedData {
 
 const cache: Map<string, number> = new Map<string, number>();
 function canCreateDisplay(target: string, words: string[]): number {
-  //console.log(target);
   let retVal = 0;
 
-  // If display is empty, then it was a match.
   if (!target) {
     return 1;
   }
 
-  // Have we got an answer for this string before? If so return that
   if (cache.has(target)) {
     return cache.get(target) as number;
   }
       
-  // For each pattern
   for (const word of words) {
-    // Does the string starts with the pattern
     if (target.startsWith(word)) {
       retVal += canCreateDisplay(target.substring(word.length), words);
     }
   }
 
-  // Add the result to the cache.
   cache.set(target, retVal);
 
-  // Return
   return retVal;
 }
 
